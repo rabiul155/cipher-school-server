@@ -22,17 +22,78 @@ async function run() {
 
         app.get('/users', async (req, res) => {
             const query = {}
-
             const result = await usersCollection.find(query).toArray();
             res.send(result)
 
         })
+
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
             res.send(result);
         })
 
+        app.get('/user', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email }
+            const result = await usersCollection.findOne(query)
+            res.send(result)
+
+        })
+
+        app.put('/userAbout', async (req, res) => {
+            const email = req.query.email;
+            const userAbout = req.body;
+
+            const filter = { email: email }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    about: userAbout.about
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+
+        })
+
+        app.put('/userDetails', async (req, res) => {
+            const email = req.query.email;
+            const userDetails = req.body;
+            console.log(userDetails);
+            const filter = { email: email }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    education: userDetails.education,
+                    institute: userDetails.institute
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options)
+            res.send(result);
+
+        })
+        app.put('/updateWebsites', async (req, res) => {
+            const email = req.query.email;
+            const websites = req.body;
+            console.log(websites);
+
+            const filter = { email: email }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    linkedIn: websites.linkedIn,
+                    gitHub: websites.gitHub,
+                    facebook: websites.facebook,
+                    twitter: websites.twitter,
+                    instagram: websites.instagram,
+                    website: websites.website
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options)
+            res.send(result);
+
+        })
 
 
 
